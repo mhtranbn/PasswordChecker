@@ -1,5 +1,5 @@
 # PasswordChecker
-A general password checker
+A general password checker written in Swift 2
 
 Usage example:
 ```swift
