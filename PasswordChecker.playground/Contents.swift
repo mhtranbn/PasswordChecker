@@ -21,6 +21,29 @@ extension NSRegularExpression {
     }
 }
 
+// Regex extension for str
+extension String {
+    func hasNumerics() -> Bool {
+        let regex = try! NSRegularExpression(pattern: "\\d", options: .CaseInsensitive)
+        return regex.generalTest(toBeTested: self) != nil
+    }
+    
+    func hasCharacters() -> Bool {
+        let regex = try! NSRegularExpression(pattern: "[A-Za-z]", options: .CaseInsensitive)
+        return regex.generalTest(toBeTested: self) != nil
+    }
+    
+    func hasSpecials() -> Bool {
+        let regex = try! NSRegularExpression(pattern: "[^\\w]", options: .CaseInsensitive)
+        return regex.generalTest(toBeTested: self) != nil
+    }
+    
+    func noWhiteSpaces() -> Bool {
+        let regex = try! NSRegularExpression(pattern: "[\\s]", options: .CaseInsensitive)
+        return regex.generalTest(toBeTested: self) == nil
+    }
+}
+
 // The possible error types for password
 enum PasswordFail: ErrorType {
     case MinimumLength
@@ -85,20 +108,16 @@ class PasswordChecker {
         guard pw.uppercaseString != pw else {
             throw PasswordFail.Lowercase
         }
-        var regex = try! NSRegularExpression(pattern: "\\d", options: .CaseInsensitive)
-        guard regex.generalTest(toBeTested: pw) != nil else {
+        guard pw.hasNumerics() else {
             throw PasswordFail.Number
         }
-        regex = try! NSRegularExpression(pattern: "[A-Za-z]", options: .CaseInsensitive)
-        guard regex.generalTest(toBeTested: pw) != nil else {
+        guard pw.hasCharacters() else {
             throw PasswordFail.Character
         }
-        regex = try! NSRegularExpression(pattern: "[^\\w]", options: .CaseInsensitive)
-        guard regex.generalTest(toBeTested: pw) != nil else {
+        guard pw.hasSpecials() else {
             throw PasswordFail.Special
         }
-        regex = try! NSRegularExpression(pattern: "[\\s]", options: .CaseInsensitive)
-        guard regex.generalTest(toBeTested: pw) == nil else {
+        guard pw.noWhiteSpaces() else {
             throw PasswordFail.WhiteSpace
         }
     }
@@ -112,11 +131,4 @@ passwordChecker.checkPw(password: "maaaa2M@") {goodPassword, error in
         print(error!)
     }
 }
-
-let regex = try! NSRegularExpression(pattern:"[\\s]", options: .CaseInsensitive)
-if regex.generalTest(toBeTested: "0101") != nil {
-    print("gotcha")
-}
-
-
 
